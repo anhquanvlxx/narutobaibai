@@ -7,38 +7,104 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Orbitron', sans-serif; background: #0d0d0d; color: #e0e0e0; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; position: relative; }
-        .panel-bg { position: relative; background: #1a1a1a; border: 2px solid #333333; border-radius: 2rem 2rem 0 2rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; margin-bottom: 80px; }
+        /* BASE STYLES & FONT */
+        body { font-family: 'Orbitron', sans-serif; background: #0d0d0d; color: #e0e0e0; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; position: relative; overflow: hidden; }
+
+        /* FIREFLIES EFFECT */
+        .fireflies-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .firefly {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.5), 0 0 20px 10px rgba(255, 0, 0, 0.2);
+            animation: firefly-move 10s infinite ease-in-out, firefly-glow 2s infinite ease-in-out;
+        }
+
+        .firefly:nth-child(2n) {
+            box-shadow: 0 0 8px 4px rgba(255, 255, 255, 0.3), 0 0 15px 8px rgba(255, 255, 255, 0.1);
+            animation-duration: 12s;
+            animation-delay: -2s;
+        }
+
+        @keyframes firefly-move {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(15vw, -10vh); }
+            50% { transform: translate(5vw, 15vh); }
+            75% { transform: translate(-10vw, -5vh); }
+        }
+
+        @keyframes firefly-glow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.2; }
+        }
+
+        /* KEY PANEL STYLES */
+        .panel-bg { position: relative; background: #1a1a1a; border: 2px solid #333333; border-radius: 2rem 2rem 0 2rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; margin-bottom: 80px; z-index: 10; }
         .panel-bg::after { content: ''; position: absolute; bottom: -15px; left: 20px; width: 30px; height: 30px; background: #1a1a1a; transform: rotate(45deg); z-index: -1; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); border-bottom-right-radius: 5px; }
+
         .main-button { background: linear-gradient(135deg, #ff0000, #b30000); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); }
         .main-button:hover:not(:disabled) { background: linear-gradient(135deg, #ff3333, #e60000); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
         .main-button:disabled { background: #333; cursor: not-allowed; color: #999; }
+        
         .feature-card { background: #282828; border-radius: 1rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); border: 1px solid #333333; }
-        .feature-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; transition: transform 0.2s, background-color 0.2s; cursor: pointer; border-radius: 0.75rem; }
-        .feature-item:hover { background-color: #333333; transform: scale(1.05); }
-        .feature-item:active { transform: scale(0.95); }
-        .feature-icon { color: #ff6666; font-size: 1.5rem; margin-right: 0.75rem; }
-        .toggle-switch-bg { background-color: #333333; transition: background-color 0.3s; }
-        .peer:checked ~ .toggle-switch-bg { background-color: #ff0000; }
+        
         .loading-spinner { border: 4px solid rgba(255, 255, 255, 0.3); border-top: 4px solid #fff; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         .message-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #1a1a1a; padding: 2rem; border-radius: 1rem; box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); z-index: 1000; text-align: center; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 999; }
         .menu-closed { display: none; }
+        
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #1a1a1a; padding: 0.5rem 0; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333333; z-index: 900; }
         .bottom-nav button { background-color: transparent; border: none; color: #e0e0e0; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: bold; transition: color 0.2s; cursor: pointer; }
         .bottom-nav button:hover { color: #ff0000; }
+        
         .naruto-logo { width: auto; height: 60px; margin: 0 auto 0.5rem auto; }
+
+        /* KEY PANEL 3D & GLOWING EFFECTS */
+        .key-input-container { position: relative; }
+        .key-input { border: 2px solid transparent; background-clip: padding-box; transition: all 0.5s ease; }
+        .key-input:focus { background: #1a1a1a; border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+        .key-input-glow { position: absolute; inset: -2px; border-radius: 9999px; background: linear-gradient(45deg, #ff0000, #ff6666, #ff0000); z-index: -1; animation: pulse 2s infinite; opacity: 0; transition: opacity 0.5s ease; filter: blur(4px); }
+        .key-input-container:focus-within .key-input-glow { opacity: 1; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        .submit-button-container { position: relative; }
+        .submit-button { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .submit-button:hover:not(:disabled) { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(255, 0, 0, 0.5); }
+        
+        .status-success { color: #2ecc71; animation: fadeInUp 0.5s ease; }
+        .status-error { color: #e74c3c; animation: shake 0.5s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+
+        #message-box { opacity: 0; transform: translate(-50%, -50%) scale(0.8); transition: all 0.3s ease-in-out; }
+        #message-box.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
-    <div id="message-box" class="hidden">
-        <div class="overlay"></div>
-        <div class="message-box">
-            <p id="message-text" class="text-lg mb-4"></p>
-            <button id="close-message" class="main-button text-white font-bold py-2 px-4 rounded-full">Đóng</button>
-        </div>
+    <div class="fireflies-container">
+        <span class="firefly" style="top: 20%; left: 10%; width: 5px; height: 5px; animation-delay: 0s;"></span>
+        <span class="firefly" style="top: 50%; left: 80%; width: 8px; height: 8px; animation-delay: -3s;"></span>
+        <span class="firefly" style="top: 70%; left: 30%; width: 6px; height: 6px; animation-delay: -5s;"></span>
+        <span class="firefly" style="top: 10%; left: 60%; width: 7px; height: 7px; animation-delay: -7s;"></span>
+        <span class="firefly" style="top: 90%; left: 40%; width: 5px; height: 5px; animation-delay: -9s;"></span>
+        <span class="firefly" style="top: 30%; left: 90%; width: 9px; height: 9px; animation-delay: -11s;"></span>
+        <span class="firefly" style="top: 60%; left: 20%; width: 6px; height: 6px; animation-delay: -13s;"></span>
     </div>
+    
+    <div id="message-box" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1a1a1a] p-8 rounded-2xl shadow-xl z-[1000] text-center hidden">
+        <p id="message-text" class="text-lg mb-4 text-white"></p>
+        <button id="close-message" class="main-button text-white font-bold py-2 px-6 rounded-full">Đóng</button>
+    </div>
+    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[999]"></div>
 
     <div id="key-panel" class="panel-bg rounded-3xl p-6 w-full max-w-lg">
         <div class="text-center mb-8">
@@ -48,11 +114,16 @@
             <p class="text-gray-400 text-sm mt-2">Vui lòng nhập key để truy cập</p>
         </div>
         <div class="space-y-4">
-            <input type="text" id="key-input" placeholder="Nhập key của bạn" class="w-full px-4 py-3 rounded-full bg-[#1a1a1a] border border-[#333333] text-white placeholder-gray-500 text-center focus:outline-none focus:ring-2 focus:ring-red-500">
-            <button id="submit-key-button" class="main-button text-white font-extrabold w-full py-4 rounded-full flex items-center justify-center space-x-2">
-                <span id="key-button-text" class="text-lg">Kích hoạt</span>
-                <div id="key-loading-spinner" class="loading-spinner hidden"></div>
-            </button>
+            <div class="key-input-container">
+                <input type="text" id="key-input" placeholder="Nhập key của bạn" class="key-input w-full px-4 py-3 rounded-full bg-[#1a1a1a] border border-[#333333] text-white placeholder-gray-500 text-center focus:outline-none focus:ring-2 focus:ring-red-500">
+                <div class="key-input-glow"></div>
+            </div>
+            <div class="submit-button-container">
+                <button id="submit-key-button" class="submit-button main-button text-white font-extrabold w-full py-4 rounded-full flex items-center justify-center space-x-2">
+                    <span id="key-button-text" class="text-lg">Kích hoạt</span>
+                    <div id="key-loading-spinner" class="loading-spinner hidden"></div>
+                </button>
+            </div>
             <p id="key-status-message" class="text-center text-sm mt-2"></p>
         </div>
 
@@ -75,7 +146,7 @@
             <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">
                 NARUTO SHIPPUDEN
             </h1>
-            <p class="text-gray-400 text-sm mt-2">PANNEL BY NARUTO SHIPPUDEN</p>
+            <p class="text-gray-400 text-sm mt-2">PANNEL CỦA NARUTO SHIPPUDEN</p>
         </div>
 
         <div class="mb-8 p-4 bg-[#282828] rounded-2xl border border-[#333333] text-center">
@@ -259,7 +330,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script>
-        // CẤU HÌNH FIREBASE CỦA BẠN
+        // CẤU HÌNH FIREBASE CỦA BẠN (Lưu ý: Thông tin này vẫn có thể bị lộ)
         const firebaseConfig = {
           apiKey: "AIzaSyBKGCVdZxmyw6VN0b7aYRQnCqpqfWwASXU",
           authDomain: "lllllk-20ede.firebaseapp.com",
@@ -301,43 +372,65 @@
         const submitKeyBtn = document.getElementById('submit-key-button');
         const keyStatusMessage = document.getElementById('key-status-message');
         const keyExpiryInfo = document.getElementById('key-expiry-info');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const closeMessageBtn = document.getElementById('close-message');
+        const overlay = document.getElementById('overlay');
+        const body = document.body;
 
-        function showMessage(message) {
-            const messageBox = document.getElementById('message-box');
-            const messageText = document.getElementById('message-text');
+        // BẮT ĐẦU: CÁC THAY ĐỔI VỀ BẢO MẬT VÀ THIẾT KẾ
+        // Chức năng chống xem mã nguồn
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            const forbiddenKeys = [123, 85, 73, 67, 74]; // F12, U, I, C, J
+            if (forbiddenKeys.includes(event.keyCode) && (event.ctrlKey || event.shiftKey)) {
+                event.preventDefault();
+                alert('Không được phép truy cập mã nguồn!');
+            }
+        });
+
+        // KẾT THÚC: CÁC THAY ĐỔI VỀ BẢO MẬT VÀ THIẾT KẾ
+
+        function showMessage(message, type = 'info') {
             messageText.innerHTML = message;
+            messageText.className = 'text-lg mb-4 text-white';
+            if (type === 'success') {
+                messageText.classList.add('text-green-400');
+            } else if (type === 'error') {
+                messageText.classList.add('text-red-400');
+            }
             messageBox.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('show');
+            }, 10);
         }
 
-        document.getElementById('close-message').addEventListener('click', function() {
-            document.getElementById('message-box').classList.add('hidden');
+        closeMessageBtn.addEventListener('click', function() {
+            messageBox.classList.remove('show');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+                overlay.classList.add('hidden');
+            }, 300);
         });
 
         function openGame() {
             const game = gameData.freefire;
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            
-            // Cố gắng mở deeplink
+            const startTime = Date.now();
             window.location.href = game.deepLink;
             
-            // Sau một khoảng thời gian ngắn, kiểm tra xem deeplink có mở thành công không
             setTimeout(() => {
-                // Nếu chưa chuyển hướng (thường xảy ra khi deeplink không hoạt động),
-                // chúng ta sẽ chuyển hướng đến trang tải game.
-                
-                // Mở game trên Android
-                if (/android/i.test(userAgent)) {
-                    window.location.href = game.androidFallback;
-                // Mở game trên iOS
-                } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                    window.location.href = game.iosFallback;
-                // Các thiết bị khác sẽ được chuyển hướng đến Android fallback mặc định
-                } else {
-                     window.location.href = game.androidFallback;
+                const elapsedTime = Date.now() - startTime;
+                if (elapsedTime < 2000) {
+                    if (/android/i.test(userAgent)) {
+                        window.location.href = game.androidFallback;
+                    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                        window.location.href = game.iosFallback;
+                    }
                 }
-            }, 500); // 0.5 giây
-            
-            showMessage(`Đã Tối Ưu Thành Công ${game.name}. Vui Lòng Vào Game Trải Nghiệm Và Gửi Feedback Qua Cho Admin`);
+            }, 1500);
+            showMessage(`Đã Tối Ưu Thành Công ${game.name}. Vui Lòng Vào Game Trải Nghiệm Và Gửi Feedback Qua Cho Admin`, 'success');
         }
         
         document.getElementById('open-game-button').addEventListener('click', function() {
@@ -366,12 +459,12 @@
                     this.style.display = 'none';
 
                     setTimeout(() => {
-                        showMessage(`Đã kích hoạt thành công tính năng: ${featureName}`);
+                        showMessage(`Đã kích hoạt thành công tính năng: ${featureName}`, 'success');
                         originalParent.removeChild(loadingSpinner);
                         this.style.display = 'inline-block';
                     }, 1000);
                 } else {
-                    showMessage(`Đã tắt tính năng: ${featureName}`);
+                    showMessage(`Đã tắt tính năng: ${featureName}`, 'info');
                 }
             });
         });
@@ -391,7 +484,7 @@
                             loadingSpinner.classList.add('hidden');
                             buttonText.textContent = "Mở Garena Free Fire";
                             openButton.disabled = false;
-                            showMessage("Đã tối ưu xong");
+                            showMessage("Đã tối ưu xong", 'success');
                             
                             setTimeout(() => {
                                 openGame();
@@ -471,7 +564,7 @@
                     localStorage.removeItem('key_expiry');
                     keyPanel.classList.remove('hidden');
                     mainPanel.classList.add('hidden');
-                    showMessage("Key của bạn đã hết hạn. Vui lòng nhập key mới.");
+                    showMessage("Key của bạn đã hết hạn. Vui lòng nhập key mới.", 'error');
                     return;
                 }
 
@@ -514,7 +607,6 @@
         });
 
         navAdminBtn.addEventListener('click', () => {
-            // Thay đổi URL theo yêu cầu
             window.location.href = 'https://linkbio.co/anhquan1';
         });
 
@@ -522,7 +614,7 @@
             const enteredKey = keyInput.value.trim();
             if (enteredKey === "") {
                 keyStatusMessage.textContent = "Vui lòng nhập key!";
-                keyStatusMessage.className = "text-center text-sm mt-2 text-yellow-400";
+                keyStatusMessage.className = "text-center text-sm mt-2 status-error";
                 return;
             }
             
@@ -544,14 +636,14 @@
 
                 if (!keyData) {
                     keyStatusMessage.textContent = "Key không hợp lệ hoặc đã hết hạn.";
-                    keyStatusMessage.className = "text-center text-sm mt-2 text-red-400";
+                    keyStatusMessage.className = "text-center text-sm mt-2 status-error";
                 } else if (keyData.expiry <= now) {
                     keyStatusMessage.textContent = "Key đã hết hạn.";
-                    keyStatusMessage.className = "text-center text-sm mt-2 text-red-400";
+                    keyStatusMessage.className = "text-center text-sm mt-2 status-error";
                     validKeysRef.child(enteredKey).remove();
                 } else if (keyData.uid && keyData.uid !== currentDeviceUID) {
                     keyStatusMessage.textContent = "Key này đã được sử dụng trên một thiết bị khác.";
-                    keyStatusMessage.className = "text-center text-sm mt-2 text-red-400";
+                    keyStatusMessage.className = "text-center text-sm mt-2 status-error";
                 } else {
                     validKeysRef.child(enteredKey).update({
                         used: true,
@@ -559,14 +651,14 @@
                     });
 
                     keyStatusMessage.textContent = "Key hợp lệ! Đang mở menu chính...";
-                    keyStatusMessage.className = "text-center text-sm mt-2 text-green-400";
+                    keyStatusMessage.className = "text-center text-sm mt-2 status-success";
                     localStorage.setItem('valid_key', enteredKey);
                     localStorage.setItem('key_expiry', keyData.expiry);
 
                     setTimeout(() => {
                         keyPanel.classList.add('hidden');
                         mainPanel.classList.remove('hidden');
-                        showMessage("Chào mừng đến với NARUTO SHIPPUDEN!");
+                        showMessage("Chào mừng đến với NARUTO SHIPPUDEN!", 'success');
                         updateDeviceInfo();
                         requestAnimationFrame(updateFpsCounter);
                         updateKeyExpiry();
@@ -577,7 +669,7 @@
                 submitKeyBtn.disabled = false;
                 buttonText.textContent = "Kích hoạt";
                 keyStatusMessage.textContent = "Lỗi kết nối. Vui lòng thử lại.";
-                keyStatusMessage.className = "text-center text-sm mt-2 text-red-400";
+                keyStatusMessage.className = "text-center text-sm mt-2 status-error";
                 console.error("Firebase error: ", error);
             });
         });
@@ -596,7 +688,7 @@
                         mainPanel.classList.remove('hidden');
                         requestAnimationFrame(updateFpsCounter);
                         updateKeyExpiry();
-                        showMessage("Chào mừng quay trở lại!");
+                        showMessage("Chào mừng quay trở lại!", 'success');
                     } else {
                         localStorage.removeItem('valid_key');
                         localStorage.removeItem('key_expiry');
@@ -604,16 +696,16 @@
                         mainPanel.classList.add('hidden');
                         if (keyData && keyData.expiry <= now) {
                             validKeysRef.child(storedKey).remove();
-                            showMessage("Key của bạn đã hết hạn.");
+                            showMessage("Key của bạn đã hết hạn.", 'error');
                         } else {
-                            showMessage("Vui lòng nhập key để truy cập.");
+                            showMessage("Vui lòng nhập key để truy cập.", 'info');
                         }
                     }
                 });
             } else {
                 keyPanel.classList.remove('hidden');
                 mainPanel.classList.add('hidden');
-                showMessage("Vui lòng nhập key để truy cập.");
+                showMessage("Vui lòng nhập key để truy cập.", 'info');
             }
         }
 
